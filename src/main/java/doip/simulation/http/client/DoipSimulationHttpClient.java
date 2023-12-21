@@ -162,19 +162,19 @@ public class DoipSimulationHttpClient {
 	}
 
 	public String createGetOverviewUrl(String status) {
-		return baseUrl + DOIP_SIMULATION_PATH + (status != null && !status.isEmpty() ? "?status=" + status : "");
+		return DOIP_SIMULATION_PATH + (status != null && !status.isEmpty() ? "?status=" + status : "");
 	}
 
 	public String createGetPlatformUrl(String platformName) {
-		return baseUrl + PLATFORM_PATH + "/" + platformName;
+		return PLATFORM_PATH + "/" + platformName;
 	}
 
 	public String createGetGatewayUrl(String platformName, String gatewayName) {
-		return baseUrl + PLATFORM_PATH + "/" + platformName + "/gateway/" + gatewayName;
+		return PLATFORM_PATH + "/" + platformName + "/gateway/" + gatewayName;
 	}
 
 	public String createGetActionUrl(String platformName, Action action) {
-		return baseUrl + PLATFORM_PATH + "/" + platformName + "?action=" + action.toString();
+		return PLATFORM_PATH + "/" + platformName + "?action=" + action.toString();
 	}
 
 }

@@ -74,12 +74,11 @@ class TestSimulationHttpClient {
 
 				ServerInfo serverInfo = (ServerInfo) response.getResult();
 				logger.info("Received response result is instanceof ServerInfo");
-				assertNotNull(serverInfo, "Received ServerInfo is null");
+				assertNotNull(serverInfo, "Received ServerInfo is wrong");
 			} else {
-				fail("Received ServerInfo is null");
+				fail("ServerInfo is not available");
 			}
 		} catch (Exception e) {
-			
 			fail("Unexpected Exception: " + e.getMessage());
 		}
 	}
@@ -88,12 +87,13 @@ class TestSimulationHttpClient {
 	void testGetOverviewExtendedFailure() throws HttpInvalidResponseBodyType,
 			URISyntaxException, IOException, InterruptedException {
 		logger.info("-------------------------- testGetOverviewExtendedFailure() ------------------------------------");
-		int statusCode = 0;
+		
 		DoipHttpServerResponse response = httpClient.getOverviewExtended("????");
-		response = httpClient.getOverviewExtended("????");
+
 		assertEquals(400, response.getStatusCode(), "The status code does not match the value 400");
 		logger.info("Received response Status code = {} ",response.getStatusCode());
 		logger.info("Received response Body = {} ", response.getResponseBody());
+	
 	}
 
 }

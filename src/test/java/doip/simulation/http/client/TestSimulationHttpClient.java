@@ -21,7 +21,7 @@ import org.apache.logging.log4j.Logger;
 import doip.junit.InitializationError;
 import doip.library.exception.DoipException;
 import doip.simulation.http.*;
-import doip.simulation.http.lib.ServerInfo;
+import doip.simulation.http.lib.*;
 
 import static com.starcode88.jtest.Assertions.*;
 //import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -70,14 +70,16 @@ class TestSimulationHttpClient {
 			assertEquals(200, response.getStatusCode(), "The HTTP status code is not 200");
 			assertNotNull(response.getResponseBody(), "The response body from server is null");
 			// Additional assertions if needed
-			if (response.getResult() != null && response.getResult() instanceof ServerInfo) {
-
-				ServerInfo serverInfo = (ServerInfo) response.getResult();
-				logger.info("Received response result is instanceof ServerInfo");
-				assertNotNull(serverInfo, "Received ServerInfo is wrong");
-			} else {
-				fail("ServerInfo is not available");
-			}
+			assertResponseType(response, ServerInfo.class);
+			
+//			if (response.getResult() != null && response.getResult() instanceof ServerInfo) {
+//
+//				ServerInfo serverInfo = (ServerInfo) response.getResult();
+//				logger.info("Received response result is instanceof ServerInfo");
+//				assertNotNull(serverInfo, "Received ServerInfo is wrong");
+//			} else {
+//				fail("ServerInfo is not available");
+//			}
 		} catch (Exception e) {
 			fail("Unexpected Exception: " + e.getMessage());
 		}
@@ -95,5 +97,47 @@ class TestSimulationHttpClient {
 		logger.info("Received response Body = {} ", response.getResponseBody());
 	
 	}
+	
+	@Test
+	void testGetPlatformExtendedSuccess() throws HttpStatusCodeException, HttpInvalidResponseBodyType,
+			URISyntaxException, IOException, InterruptedException {
+		logger.info("-------------------------- testGetPlatformExtendedSuccess ------------------------------------");
+		try {
+			DoipHttpServerResponse response = httpClient.getPlatformExtended("X2024");
+
+			// Assert
+			assertEquals(200, response.getStatusCode(), "The HTTP status code is not 200");
+			assertNotNull(response.getResponseBody(), "The response body from server is null");
+			// Additional assertions if needed
+			assertResponseType(response, Platform.class);
+
+		} catch (Exception e) {
+			fail("Unexpected Exception: " + e.getMessage());
+		}
+	}
+
+	@Test
+	void testGetPlatformExtendedFailure() throws HttpInvalidResponseBodyType,
+			URISyntaxException, IOException, InterruptedException {
+		logger.info("-------------------------- testGetPlatformExtendedFailure() ------------------------------------");
+		
+		DoipHttpServerResponse response =  httpClient.getPlatformExtended("Unknown");
+
+		assertEquals(404, response.getStatusCode(), "The status code does not match the value 400");
+		logger.info("Received response Status code = {} ",response.getStatusCode());
+		logger.info("Received response Body = {} ", response.getResponseBody());
+	
+	}
+	
+	private <T> void assertResponseType(DoipHttpServerResponse response, Class<T> expectedClass) {
+	    if (response.getResult() != null && expectedClass.isInstance(response.getResult())) {
+	        T result = expectedClass.cast(response.getResult());
+	        logger.info("Received response result is an instance of {}", expectedClass.getSimpleName());
+	        assertNotNull(result, "Received result is null");
+	    } else {
+	        fail(expectedClass.getSimpleName() + " is not available");
+	    }
+	}
+
 
 }

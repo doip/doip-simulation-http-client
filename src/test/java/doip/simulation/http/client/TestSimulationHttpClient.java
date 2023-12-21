@@ -85,20 +85,15 @@ class TestSimulationHttpClient {
 	}
 
 	@Test
-	void testGetOverviewExtendedFailure() throws HttpStatusCodeException, HttpInvalidResponseBodyType,
+	void testGetOverviewExtendedFailure() throws HttpInvalidResponseBodyType,
 			URISyntaxException, IOException, InterruptedException {
 		logger.info("-------------------------- testGetOverviewExtendedFailure() ------------------------------------");
 		int statusCode = 0;
-		DoipHttpServerResponse response = null;
-		try {
-		  response = httpClient.getOverviewExtended("????");
-		} catch (HttpStatusCodeException e) {
-			statusCode = e.getResponse().statusCode();
-			String statusText = HttpUtils.getStatusText(statusCode);
-			logger.info("Status code = {} ({})", statusCode, statusText);
-		}
-		assertEquals(400, statusCode, "The status code does not match the value 400");
-		
+		DoipHttpServerResponse response = httpClient.getOverviewExtended("????");
+		response = httpClient.getOverviewExtended("????");
+		assertEquals(400, response.getStatusCode(), "The status code does not match the value 400");
+		logger.info("Received response Status code = {} ",response.getStatusCode());
+		logger.info("Received response Body = {} ", response.getResponseBody());
 	}
 
 }

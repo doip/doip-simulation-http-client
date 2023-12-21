@@ -42,10 +42,16 @@ public class DoipSimulationHttpClient {
 		return response.body();
 	}
 
-	public DoipHttpServerResponse getOverviewExtended(String status) throws HttpStatusCodeException,
-			HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
+	public DoipHttpServerResponse getOverviewExtended(String status)
+			throws HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 		String url = createGetOverviewUrl(status);
-		HttpResponse<String> response = sendGetRequest(url);
+
+		HttpResponse<String> response = null;
+		try {
+			response = sendGetRequest(url);
+		} catch (HttpStatusCodeException e) {
+			return new DoipHttpServerResponse(e.getResponse().statusCode(), null, e.getResponse().body().toString());
+		}
 
 		return createExtendedResponse(response, ServerInfo.class);
 	}
@@ -58,11 +64,15 @@ public class DoipSimulationHttpClient {
 		return response.body();
 	}
 
-	public DoipHttpServerResponse getPlatformExtended(String platformName) throws HttpStatusCodeException,
-			HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
+	public DoipHttpServerResponse getPlatformExtended(String platformName)
+			throws HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 		String url = createGetPlatformUrl(platformName);
-		HttpResponse<String> response = sendGetRequest(url);
-
+		HttpResponse<String> response = null;
+		try {
+			response = sendGetRequest(url);
+		} catch (HttpStatusCodeException e) {
+			return new DoipHttpServerResponse(e.getResponse().statusCode(), null, e.getResponse().body().toString());
+		}
 		return createExtendedResponse(response, Platform.class);
 	}
 
@@ -75,10 +85,15 @@ public class DoipSimulationHttpClient {
 	}
 
 	public DoipHttpServerResponse getGatewayExtended(String platformName, String gatewayName)
-			throws HttpStatusCodeException, HttpInvalidResponseBodyType, URISyntaxException, IOException,
-			InterruptedException {
+			throws HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 		String url = createGetGatewayUrl(platformName, gatewayName);
-		HttpResponse<String> response = sendGetRequest(url);
+
+		HttpResponse<String> response = null;
+		try {
+			response = sendGetRequest(url);
+		} catch (HttpStatusCodeException e) {
+			return new DoipHttpServerResponse(e.getResponse().statusCode(), null, e.getResponse().body().toString());
+		}
 
 		return createExtendedResponse(response, Gateway.class);
 	}
@@ -97,14 +112,19 @@ public class DoipSimulationHttpClient {
 	}
 
 	public DoipHttpServerResponse executeActionPostExtended(String platformName, Action action)
-			throws HttpStatusCodeException, HttpInvalidRequestBodyType, HttpInvalidResponseBodyType, URISyntaxException,
-			IOException, InterruptedException {
+			throws HttpInvalidRequestBodyType, HttpInvalidResponseBodyType, URISyntaxException, IOException,
+			InterruptedException {
 		ActionRequest request = new ActionRequest();
 		request.setAction(action);
 		String json = JsonUtils.serialize(request);
 
 		String url = createGetPlatformUrl(platformName);
-		HttpResponse<String> response = sendPostRequest(json, url);
+		HttpResponse<String> response = null;
+		try {
+			response = sendPostRequest(url, json);
+		} catch (HttpStatusCodeException e) {
+			return new DoipHttpServerResponse(e.getResponse().statusCode(), null, e.getResponse().body().toString());
+		}
 
 		return createExtendedResponse(response, Platform.class);
 	}
@@ -121,11 +141,15 @@ public class DoipSimulationHttpClient {
 	}
 
 	public DoipHttpServerResponse executeActionGetExtended(String platformName, Action action)
-			throws HttpStatusCodeException, HttpInvalidResponseBodyType, URISyntaxException, IOException,
-			InterruptedException {
+			throws HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 
 		String url = createGetActionUrl(platformName, action);
-		HttpResponse<String> response = sendGetRequest(url);
+		HttpResponse<String> response = null;
+		try {
+			response = sendGetRequest(url);
+		} catch (HttpStatusCodeException e) {
+			return new DoipHttpServerResponse(e.getResponse().statusCode(), null, e.getResponse().body().toString());
+		}
 
 		return createExtendedResponse(response, Platform.class);
 	}

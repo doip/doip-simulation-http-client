@@ -87,7 +87,7 @@ class TestSimulationHttpClient {
 			URISyntaxException, IOException, InterruptedException {
 		logger.info("-------------------------- testGetOverviewExtendedFailure ------------------------------------");
 		
-		DoipHttpServerResponse response = httpClient.getOverviewExtended("????");
+		DoipHttpServerResponse response = httpClient.getOverviewExtended("XXXXX");
 
 		assertEquals(400, response.getStatusCode(), "The status code does not match the value 400");
 		logger.info("Received response Status code = {} ",response.getStatusCode());
@@ -160,9 +160,9 @@ class TestSimulationHttpClient {
 	}
 	
 	@Test
-	void testPerformActionGet() throws HttpStatusCodeException, HttpInvalidResponseBodyType,
+	void testPerformActionGetSuccess() throws HttpStatusCodeException, HttpInvalidResponseBodyType,
 			URISyntaxException, IOException, InterruptedException {
-		logger.info("-------------------------- testPerformActionGet ------------------------------------");
+		logger.info("-------------------------- testPerformActionGetSuccess ------------------------------------");
 		try {
 			DoipHttpServerResponse response = httpClient.executeActionGetExtended(platformName,Action.start);
 
@@ -184,6 +184,30 @@ class TestSimulationHttpClient {
 		}
 	}
 	
+	@Test
+	void testPerformActionGetFailure() throws HttpStatusCodeException, HttpInvalidResponseBodyType,
+			URISyntaxException, IOException, InterruptedException {
+		logger.info("-------------------------- testPerformActionGetFailure ------------------------------------");
+		try {
+			DoipHttpServerResponse response = httpClient.executeActionGetExtended("Unknown",Action.start);
+
+			assertEquals(404, response.getStatusCode(), "The status code does not match the value 400");
+			logger.info("Received response Status code = {} ",response.getStatusCode());
+			logger.info("Received response Body = {} ", response.getResponseBody());
+			
+			response = httpClient.executeActionGetExtended("Unknown",Action.stop);
+			
+			assertEquals(404, response.getStatusCode(), "The status code does not match the value 400");
+			logger.info("Received response Status code = {} ",response.getStatusCode());
+			logger.info("Received response Body = {} ", response.getResponseBody());
+			
+
+		} catch (Exception e) {
+			fail("Unexpected Exception: " + e.getMessage());
+		}
+	}
+	
+	@SuppressWarnings("unused")
 	private <T> void assertResponseType(DoipHttpServerResponse response, Class<T> expectedClass) {
 	    if (response.getResult() != null && expectedClass.isInstance(response.getResult())) {
 	        T result = expectedClass.cast(response.getResult());
@@ -194,6 +218,7 @@ class TestSimulationHttpClient {
 	    }
 	}
 
+	@SuppressWarnings("unused")
 	private void checkResponseResult(DoipHttpServerResponse response) {
 		if (response.getResult() != null && response.getResult() instanceof ServerInfo) {
 

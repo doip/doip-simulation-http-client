@@ -174,7 +174,7 @@ public class DoipSimulationHttpClient {
 		String json = JsonUtils.serialize(request);
 
 		String url = createGetPlatformUrl(platformName);
-		HttpResponse<String> response = sendPostRequest(json, url);
+		HttpResponse<String> response = sendPostRequest(url, json);
 
 		return response.body();
 	}

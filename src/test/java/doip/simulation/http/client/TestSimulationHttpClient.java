@@ -232,6 +232,25 @@ class TestSimulationHttpClient {
 		}
 	}
 	
+	@Test
+	void testPerformActionPostShort() throws HttpStatusCodeException, HttpInvalidResponseBodyType,
+			URISyntaxException, IOException, InterruptedException {
+		logger.info("-------------------------- testPerformActionPostShort ------------------------------------");
+		try {
+			String responseBody = httpClient.executeActionPost(platformName,Action.start);
+	
+			assertNotNull(responseBody, "The response body from server is null");
+			
+			responseBody = httpClient.executeActionPost(platformName,Action.stop);
+			
+			assertNotNull(responseBody, "The response body from server is null");
+			
+
+		} catch (Exception e) {
+			fail("Unexpected Exception: " + e.getMessage());
+		}
+	}
+	
 	@SuppressWarnings("unused")
 	private <T> void assertResponseType(DoipHttpServerResponse response, Class<T> expectedClass) {
 	    if (response.getResult() != null && expectedClass.isInstance(response.getResult())) {

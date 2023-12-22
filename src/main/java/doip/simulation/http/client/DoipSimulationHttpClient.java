@@ -222,7 +222,7 @@ public class DoipSimulationHttpClient {
 
 		return response.body();
 	}
-	
+
 	/**
 	 * Perform the specified action on the given platform.
 	 *

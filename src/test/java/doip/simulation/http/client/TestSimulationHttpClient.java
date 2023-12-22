@@ -69,22 +69,17 @@ class TestSimulationHttpClient {
 			// Assert
 			assertEquals(200, response.getStatusCode(), "The HTTP status code is not 200");
 			assertNotNull(response.getResponseBody(), "The response body from server is null");
-			// Additional assertions if needed
-			assertResponseType(response, ServerInfo.class);
 			
-//			if (response.getResult() != null && response.getResult() instanceof ServerInfo) {
-//
-//				ServerInfo serverInfo = (ServerInfo) response.getResult();
-//				logger.info("Received response result is instanceof ServerInfo");
-//				assertNotNull(serverInfo, "Received ServerInfo is wrong");
-//			} else {
-//				fail("ServerInfo is not available");
-//			}
+			//assertResponseType(response, ServerInfo.class);
+			ServerInfo serverInfo = response.getResultAs(ServerInfo.class);
+			assertNotNull(serverInfo, "Received result is null");
+			//checkResponseResult(response);
 		} catch (Exception e) {
 			fail("Unexpected Exception: " + e.getMessage());
 		}
 	}
 
+	
 	@Test
 	void testGetOverviewExtendedFailure() throws HttpInvalidResponseBodyType,
 			URISyntaxException, IOException, InterruptedException {
@@ -108,8 +103,9 @@ class TestSimulationHttpClient {
 			// Assert
 			assertEquals(200, response.getStatusCode(), "The HTTP status code is not 200");
 			assertNotNull(response.getResponseBody(), "The response body from server is null");
-			// Additional assertions if needed
-			assertResponseType(response, Platform.class);
+			
+			Platform platform= response.getResultAs(Platform.class);
+			assertNotNull(platform, "Received result is null");
 
 		} catch (Exception e) {
 			fail("Unexpected Exception: " + e.getMessage());
@@ -137,6 +133,17 @@ class TestSimulationHttpClient {
 	    } else {
 	        fail(expectedClass.getSimpleName() + " is not available");
 	    }
+	}
+
+	private void checkResponseResult(DoipHttpServerResponse response) {
+		if (response.getResult() != null && response.getResult() instanceof ServerInfo) {
+
+			ServerInfo serverInfo = (ServerInfo) response.getResult();
+			logger.info("Received response result is instanceof ServerInfo");
+			assertNotNull(serverInfo, "Received ServerInfo is wrong");
+		} else {
+			fail("ServerInfo is not available");
+		}
 	}
 
 

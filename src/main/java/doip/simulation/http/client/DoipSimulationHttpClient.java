@@ -19,6 +19,9 @@ import doip.simulation.http.lib.*;
 import doip.simulation.http.lib.Action;
 import doip.simulation.http.lib.utils.JsonUtils;
 
+/**
+ * HTTP client for interacting with the DoipSimulation server.
+ */
 public class DoipSimulationHttpClient {
 	private static Logger logger = LogManager.getLogger(DoipSimulationHttpClient.class);
 
@@ -28,12 +31,30 @@ public class DoipSimulationHttpClient {
 	private static final String PLATFORM_PATH = "/doip-simulation/platform";
 	private static final String DOIP_SIMULATION_PATH = "/doip-simulation";
 
+	/**
+	 * Constructor for initializing the HTTP client with a base URL.
+	 *
+	 * @param baseUrl The base URL of the DoipSimulation server.
+	 */
 	public DoipSimulationHttpClient(String baseUrl) {
 		this.baseUrl = baseUrl;
 		// this.httpClient = new HttpClient("http://localhost:8080");
 		this.httpClient = new HttpClient(baseUrl);
 	}
 
+	/**
+	 * Retrieves the overview from the server based on the specified status.
+	 *
+	 * @param status The status parameter for filtering the overview.
+	 * @return The response body as a String.
+	 * @throws HttpStatusCodeException     If the HTTP status code indicates an
+	 *                                     error.
+	 * @throws HttpInvalidResponseBodyType If the HTTP response body type is
+	 *                                     invalid.
+	 * @throws URISyntaxException          If there is an issue with the URI syntax.
+	 * @throws IOException                 If an I/O error occurs.
+	 * @throws InterruptedException        If the operation is interrupted.
+	 */
 	public String getOverview(String status) throws HttpStatusCodeException, HttpInvalidResponseBodyType,
 			URISyntaxException, IOException, InterruptedException {
 		String url = createGetOverviewUrl(status);
@@ -42,10 +63,22 @@ public class DoipSimulationHttpClient {
 		return response.body();
 	}
 
+	/**
+	 * Retrieves the extended overview from the server based on the specified
+	 * status.
+	 *
+	 * @param status The status parameter for filtering the overview.
+	 * @return The extended server response.
+	 * @throws HttpInvalidResponseBodyType If the HTTP response body type is
+	 *                                     invalid.
+	 * @throws URISyntaxException          If there is an issue with the URI syntax.
+	 * @throws IOException                 If an I/O error occurs.
+	 * @throws InterruptedException        If the operation is interrupted.
+	 */
 	public DoipHttpServerResponse getOverviewExtended(String status)
 			throws HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 		String url = createGetOverviewUrl(status);
-		
+
 		try {
 			HttpResponse<String> response = sendGetRequest(url);
 			return createExtendedResponse(response, ServerInfo.class);
@@ -56,6 +89,12 @@ public class DoipSimulationHttpClient {
 
 	}
 
+	/**
+	 * Retrieves a platform from the server by name.
+	 *
+	 * @param platformName The name of the platform.
+	 * @return The response body as a String.
+	 */
 	public String getPlatform(String platformName) throws HttpStatusCodeException, HttpInvalidResponseBodyType,
 			URISyntaxException, IOException, InterruptedException {
 		String url = createGetPlatformUrl(platformName);
@@ -64,6 +103,12 @@ public class DoipSimulationHttpClient {
 		return response.body();
 	}
 
+	/**
+	 * Retrieves the extended overview of platform from the server by name.
+	 *
+	 * @param platformName The name of the platform.
+	 * @return The extended server response.
+	 */
 	public DoipHttpServerResponse getPlatformExtended(String platformName)
 			throws HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 		String url = createGetPlatformUrl(platformName);
@@ -78,6 +123,13 @@ public class DoipSimulationHttpClient {
 
 	}
 
+	/**
+	 * Retrieve a gateway by name for a specific platform.
+	 *
+	 * @param platformName The name of the platform.
+	 * @param gatewayName  The name of the gateway.
+	 * @return The response body as a String.
+	 */
 	public String getGateway(String platformName, String gatewayName) throws HttpStatusCodeException,
 			HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 		String url = createGetGatewayUrl(platformName, gatewayName);
@@ -86,6 +138,13 @@ public class DoipSimulationHttpClient {
 		return response.body();
 	}
 
+	/**
+	 * Retrieve the extended overview of gateway by name for a specific platform.
+	 *
+	 * @param platformName The name of the platform.
+	 * @param gatewayName  The name of the gateway.
+	 * @return The extended server response.
+	 */
 	public DoipHttpServerResponse getGatewayExtended(String platformName, String gatewayName)
 			throws HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 		String url = createGetGatewayUrl(platformName, gatewayName);
@@ -100,6 +159,13 @@ public class DoipSimulationHttpClient {
 
 	}
 
+	/**
+	 * Perform the specified action on the given platform.
+	 *
+	 * @param platform The platform on which the action needs to be performed.
+	 * @param action   The action to be performed (start or stop ...).
+	 * @return The response body as a String.
+	 */
 	public String executeActionPost(String platformName, Action action)
 			throws HttpStatusCodeException, HttpInvalidRequestBodyType, HttpInvalidResponseBodyType, URISyntaxException,
 			IOException, InterruptedException {
@@ -113,6 +179,13 @@ public class DoipSimulationHttpClient {
 		return response.body();
 	}
 
+	/**
+	 * Perform the specified action on the given platform.
+	 *
+	 * @param platform The platform on which the action needs to be performed.
+	 * @param action   The action to be performed (start or stop ...).
+	 * @return The extended server response.
+	 */
 	public DoipHttpServerResponse executeActionPostExtended(String platformName, Action action)
 			throws HttpInvalidRequestBodyType, HttpInvalidResponseBodyType, URISyntaxException, IOException,
 			InterruptedException {
@@ -132,6 +205,13 @@ public class DoipSimulationHttpClient {
 
 	}
 
+	/**
+	 * Perform the specified action on the given platform.
+	 *
+	 * @param platform The platform on which the action needs to be performed.
+	 * @param action   The action to be performed (start or stop ...).
+	 * @return The response body as a String.
+	 */
 	public String executeActionGet(String platformName, Action action) throws HttpStatusCodeException,
 			HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 
@@ -142,7 +222,14 @@ public class DoipSimulationHttpClient {
 
 		return response.body();
 	}
-
+	
+	/**
+	 * Perform the specified action on the given platform.
+	 *
+	 * @param platform The platform on which the action needs to be performed.
+	 * @param action   The action to be performed (start or stop ...).
+	 * @return The extended server response.
+	 */
 	public DoipHttpServerResponse executeActionGetExtended(String platformName, Action action)
 			throws HttpInvalidResponseBodyType, URISyntaxException, IOException, InterruptedException {
 

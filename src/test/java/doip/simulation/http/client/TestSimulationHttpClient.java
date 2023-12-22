@@ -32,6 +32,8 @@ class TestSimulationHttpClient {
 
 	private static final String host = "http://localhost:8080";
 	private static DoipSimulationHttpClient httpClient = null;
+	private static final String platformName = "X2024";
+	private static final String GatewayName = "GW";
 
 	@BeforeAll
 	static void setUpBeforeClass() throws Exception {
@@ -83,7 +85,7 @@ class TestSimulationHttpClient {
 	@Test
 	void testGetOverviewExtendedFailure() throws HttpInvalidResponseBodyType,
 			URISyntaxException, IOException, InterruptedException {
-		logger.info("-------------------------- testGetOverviewExtendedFailure() ------------------------------------");
+		logger.info("-------------------------- testGetOverviewExtendedFailure ------------------------------------");
 		
 		DoipHttpServerResponse response = httpClient.getOverviewExtended("????");
 
@@ -98,7 +100,7 @@ class TestSimulationHttpClient {
 			URISyntaxException, IOException, InterruptedException {
 		logger.info("-------------------------- testGetPlatformExtendedSuccess ------------------------------------");
 		try {
-			DoipHttpServerResponse response = httpClient.getPlatformExtended("X2024");
+			DoipHttpServerResponse response = httpClient.getPlatformExtended(platformName);
 
 			// Assert
 			assertEquals(200, response.getStatusCode(), "The HTTP status code is not 200");
@@ -115,7 +117,7 @@ class TestSimulationHttpClient {
 	@Test
 	void testGetPlatformExtendedFailure() throws HttpInvalidResponseBodyType,
 			URISyntaxException, IOException, InterruptedException {
-		logger.info("-------------------------- testGetPlatformExtendedFailure() ------------------------------------");
+		logger.info("-------------------------- testGetPlatformExtendedFailure ------------------------------------");
 		
 		DoipHttpServerResponse response =  httpClient.getPlatformExtended("Unknown");
 
@@ -123,6 +125,63 @@ class TestSimulationHttpClient {
 		logger.info("Received response Status code = {} ",response.getStatusCode());
 		logger.info("Received response Body = {} ", response.getResponseBody());
 	
+	}
+	
+	@Test
+	void testGetGatewayExtendedSuccess() throws HttpStatusCodeException, HttpInvalidResponseBodyType,
+			URISyntaxException, IOException, InterruptedException {
+		logger.info("-------------------------- testGetGatewayExtendedSuccess ------------------------------------");
+		try {
+			DoipHttpServerResponse response = httpClient.getGatewayExtended(platformName,GatewayName);
+
+			// Assert
+			assertEquals(200, response.getStatusCode(), "The HTTP status code is not 200");
+			assertNotNull(response.getResponseBody(), "The response body from server is null");
+			
+			Gateway gateway= response.getResultAs(Gateway.class);
+			assertNotNull(gateway, "Received result is null");
+
+		} catch (Exception e) {
+			fail("Unexpected Exception: " + e.getMessage());
+		}
+	}
+
+	@Test
+	void testGetGatewayExtendedFailure() throws HttpInvalidResponseBodyType,
+			URISyntaxException, IOException, InterruptedException {
+		logger.info("-------------------------- testGetGatewayExtendedFailure ------------------------------------");
+		
+		DoipHttpServerResponse response =  httpClient.getGatewayExtended("XXXX","XX");
+
+		assertEquals(404, response.getStatusCode(), "The status code does not match the value 400");
+		logger.info("Received response Status code = {} ",response.getStatusCode());
+		logger.info("Received response Body = {} ", response.getResponseBody());
+	
+	}
+	
+	@Test
+	void testPerformActionGet() throws HttpStatusCodeException, HttpInvalidResponseBodyType,
+			URISyntaxException, IOException, InterruptedException {
+		logger.info("-------------------------- testPerformActionGet ------------------------------------");
+		try {
+			DoipHttpServerResponse response = httpClient.executeActionGetExtended(platformName,Action.start);
+
+			// Assert
+			assertEquals(200, response.getStatusCode(), "The HTTP status code is not 200");
+			assertNotNull(response.getResponseBody(), "The response body from server is null");
+			
+			Platform platform= response.getResultAs(Platform.class);
+			assertNotNull(platform, "Received result is null");
+			
+			response = httpClient.executeActionGetExtended(platformName,Action.stop);
+			
+			assertEquals(200, response.getStatusCode(), "The HTTP status code is not 200");
+			assertNotNull(response.getResponseBody(), "The response body from server is null");
+			
+
+		} catch (Exception e) {
+			fail("Unexpected Exception: " + e.getMessage());
+		}
 	}
 	
 	private <T> void assertResponseType(DoipHttpServerResponse response, Class<T> expectedClass) {

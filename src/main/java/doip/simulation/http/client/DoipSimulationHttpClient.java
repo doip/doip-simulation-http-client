@@ -251,7 +251,7 @@ public class DoipSimulationHttpClient {
 		return httpClient.GET(url, String.class);
 	}
 
-	private HttpResponse<String> sendPostRequest(String json, String url) throws URISyntaxException, IOException,
+	private HttpResponse<String> sendPostRequest(String url, String json) throws URISyntaxException, IOException,
 			InterruptedException, HttpStatusCodeException, HttpInvalidRequestBodyType, HttpInvalidResponseBodyType {
 		logger.info("Sending POST request to: {}", url);
 		return httpClient.POST(url, json, String.class);
